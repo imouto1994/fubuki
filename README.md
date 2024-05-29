@@ -1,0 +1,2 @@
+# fubuki
+Manga Generator Pipeline
