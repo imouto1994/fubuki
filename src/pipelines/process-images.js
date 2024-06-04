@@ -33,6 +33,7 @@ const config = require("../config");
 
 const ENTRY_TYPE = config.type ?? "manga";
 const SKIP_UPSCALING = config.skipUpscaling ?? false;
+const SKIP_AUTOCOVER = config.skipAutocover ?? false;
 const ENLARGE_WORKERS_COUNT = config.enlargeWorkersCount || 2;
 const COMPRESS_WORKERS_COUNT = config.compressWorkersCount || 3;
 const WAIFU2X_BIN_PATH = path.join(
@@ -211,7 +212,7 @@ async function processImages(entryDirPath) {
 
   // Automatically create cover (if needed) by using the first image
   let autoCoverPath;
-  if (coverPaths.length === 0) {
+  if (coverPaths.length === 0 && !SKIP_AUTOCOVER) {
     const firstImagePath = imagePaths[0];
     const firstFileExtension = getFileExtension(firstImagePath);
     autoCoverPath = path.join(entryDirPath, `./cover.${firstFileExtension}`);
