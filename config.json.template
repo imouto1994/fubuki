@@ -1,0 +1,11 @@
+{
+  "type": "manga",
+  "enlargeWorkersCount": 2,
+  "compressWorkersCount": 3,
+  "idealWebtoonPageRatio": 1.5,
+  "limitSize": 1500000000,
+  "skipUpscaling": false,
+  "githubToken": "",
+  "coverQuality": 90,
+  "thumbnailQuality": 75
+}
