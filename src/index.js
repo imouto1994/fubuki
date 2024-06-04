@@ -11,11 +11,14 @@ const processImages = require("./pipelines/process-images");
 const generateRepo = require("./pipelines/generate-repo");
 const config = require("./config");
 const logger = require("./utils/logger");
+const { naturalCompare } = require("./utils/string");
 
 const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
 
 (async () => {
   const ownerDirPaths = await listDirectoryPaths("content/*");
+
+  ownerDirPaths.sort(naturalCompare);
 
   for (const ownerDirPath of ownerDirPaths) {
     const ownerName = path.basename(ownerDirPath);

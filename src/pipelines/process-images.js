@@ -2,6 +2,7 @@ const fsPromises = require("fs/promises");
 const path = require("path");
 const sizeOf = require("image-size");
 const CWebp = require("cwebp").CWebp;
+const DWebp = require("cwebp").DWebp;
 const pLimit = require("p-limit");
 const jimp = require("jimp");
 
@@ -146,20 +147,35 @@ async function cropImage(imagePath) {
     return;
   }
 
+  let srcImagePath = imagePath;
+
+  // Convert to PNG since JIMP can't handle WebP
+  if (imageExtension === "webp") {
+    srcImagePath = path.resolve(
+      imageDirPath,
+      `./${imageNameWithoutExtension}.png`
+    );
+    const decoder = new DWebp(imagePath);
+    await decoder.write(srcImagePath);
+  }
+
   const idealPageHeight = Math.floor(width * IDEAL_WEBTOON_PAGE_RATIO);
   const numCrops = Math.ceil(height / idealPageHeight);
   for (let i = 0; i < numCrops; i++) {
-    const image = await jimp.read(imagePath);
+    const image = await jimp.read(srcImagePath);
     const cropHeight =
       i !== numCrops - 1 ? idealPageHeight : height - i * idealPageHeight;
     image.crop(0, i * idealPageHeight, width, cropHeight);
     await image.write(
       `${imageDirPath}/${imageNameWithoutExtension}_cropped_${padNumber(
         i + 1
-      )}.${imageExtension}`
+      )}.png`
     );
   }
-  await deleteFiles([imagePath]);
+  await deleteFiles([
+    imagePath,
+    ...(srcImagePath !== imagePath ? [srcImagePath] : []),
+  ]);
 }
 
 async function processImages(entryDirPath) {
