@@ -27,6 +27,8 @@ const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
     const ownerDirPattern = ownerDirPath;
     const entryDirPaths = await listDirectoryPaths(`${ownerDirPattern}/*`);
 
+    entryDirPaths.sort(naturalCompare);
+
     let currentSize = 0;
     let currentEntryDirPaths = [];
     for (const entryDirPath of entryDirPaths) {
