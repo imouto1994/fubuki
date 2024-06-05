@@ -5,3 +5,7 @@ content/*
 projects/*
 !projects/.gitkeep
 /config.json
+decrypt_dst/
+decrypt_src/
+encrypt_dst/
+encrypt_src/

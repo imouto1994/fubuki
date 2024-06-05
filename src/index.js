@@ -14,6 +14,7 @@ const logger = require("./utils/logger");
 const { naturalCompare } = require("./utils/string");
 
 const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
+const PROCESS_IMAGES_ONLY = config.processImagesOnly ?? false;
 
 (async () => {
   const ownerDirPaths = await listDirectoryPaths("content/*");
@@ -63,6 +64,10 @@ const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
           );
           return;
         }
+      }
+
+      if (PROCESS_IMAGES_ONLY) {
+        continue;
       }
 
       // Skip entry if the entry has already been deployed

@@ -4,6 +4,7 @@
   "compressWorkersCount": 3,
   "idealWebtoonPageRatio": 1.5,
   "limitSize": 1500000000,
+  "processImagesOnly": false,
   "skipUpscaling": false,
   "skipAutocover": false,
   "githubToken": "",

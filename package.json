@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "build": "pkg src/index.js -c pkg.json -o start.exe"
+    "build": "pkg src/index.js -c pkg.json -o start.exe",
+    "decrypt": "node src/decrypt.js",
+    "encrypt": "node src/encrypt.js"
   },
   "keywords": [],
   "author": "",
