@@ -78,7 +78,7 @@ const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
         // Generate the repo right away
         // if the size of this single entry is already more than the limit
         if (currentSize > LIMIT_SIZE) {
-          generateRepo(ownerDirPath, currentEntryDirPaths);
+          await generateRepo(ownerDirPath, currentEntryDirPaths);
           currentSize = 0;
           currentEntryDirPaths = [];
         }
@@ -86,7 +86,7 @@ const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
         if (currentSize + entrySize > LIMIT_SIZE) {
           // Generate repo if the size of the set of current entries
           // will exceed the limit if we add one more entry
-          generateRepo(ownerDirPath, currentEntryDirPaths);
+          await generateRepo(ownerDirPath, currentEntryDirPaths);
           currentSize = entrySize;
           currentEntryDirPaths = [entryDirPath];
         } else {
@@ -98,7 +98,7 @@ const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
 
     // Generate repo for the set of remaining entries
     if (currentEntryDirPaths.length > 0) {
-      generateRepo(ownerDirPath, currentEntryDirPaths);
+      await generateRepo(ownerDirPath, currentEntryDirPaths);
     }
   }
 })();
