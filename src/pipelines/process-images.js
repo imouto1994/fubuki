@@ -42,10 +42,10 @@ const WAIFU2X_BIN_PATH = path.join(
   "./bin/waifu2x/waifu2x-ncnn-vulkan.exe"
 );
 const MIN_WIDTH_SKIP_ENLARGE = 2048;
-const MAX_PAGE_WIDTH = 4096;
 const IDEAL_PAGE_WIDTH = 2048;
-const IDEAL_COVER_WIDTH = 600;
-const IDEAL_THUMBNAIL_WIDTH = 200;
+const MAX_PAGE_WIDTH = 2560;
+const IDEAL_COVER_WIDTH = 640;
+const IDEAL_THUMBNAIL_WIDTH = 256;
 const IDEAL_WEBTOON_PAGE_RATIO = config.idealWebtoonPageRatio || 1.5;
 
 async function compressImage(
