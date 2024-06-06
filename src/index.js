@@ -15,6 +15,7 @@ const { naturalCompare } = require("./utils/string");
 
 const LIMIT_SIZE = config.limitSize || 1500 * 1000 * 1000;
 const PROCESS_IMAGES_ONLY = config.processImagesOnly ?? false;
+const SKIP_DEPLOYED_CHECK = config.skipDeployedCheck ?? false;
 
 (async () => {
   const ownerDirPaths = await listDirectoryPaths("content/*");
@@ -71,7 +72,7 @@ const PROCESS_IMAGES_ONLY = config.processImagesOnly ?? false;
       }
 
       // Skip entry if the entry has already been deployed
-      if (metadata.deployed) {
+      if (metadata.deployed && !SKIP_DEPLOYED_CHECK) {
         continue;
       }
 
