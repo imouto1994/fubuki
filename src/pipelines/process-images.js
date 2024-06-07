@@ -188,7 +188,12 @@ async function processImages(entryDirPath) {
   );
 
   // Sort image paths in natural order
-  imagePaths.sort(naturalCompare);
+  imagePaths.sort((pathA, pathB) =>
+    naturalCompare(
+      getFileNameWithoutExtension(pathA),
+      getFileNameWithoutExtension(pathB)
+    )
+  );
 
   // Separate image paths to 2 sections: Pages, Covers
   let coverPaths = imagePaths.filter((imagePath) =>
@@ -210,7 +215,12 @@ async function processImages(entryDirPath) {
   );
 
   // Sort image paths in natural order
-  imagePaths.sort(naturalCompare);
+  imagePaths.sort((pathA, pathB) =>
+    naturalCompare(
+      getFileNameWithoutExtension(pathA),
+      getFileNameWithoutExtension(pathB)
+    )
+  );
 
   // Separate image paths to 2 sections: Pages, Covers
   coverPaths = imagePaths.filter((imagePath) =>
@@ -273,7 +283,12 @@ async function processImages(entryDirPath) {
   }
 
   // Sort enlarged image paths in natural order
-  enlargedImagePaths.sort(naturalCompare);
+  enlargedImagePaths.sort((pathA, pathB) =>
+    naturalCompare(
+      getFileNameWithoutExtension(pathA),
+      getFileNameWithoutExtension(pathB)
+    )
+  );
 
   // Separate enlarged image paths to 2 sections: Pages, Covers
   const enlargedCoverPaths = enlargedImagePaths.filter((imagePath) =>
@@ -362,7 +377,12 @@ async function processImages(entryDirPath) {
   ]);
 
   // Sort compressed image paths in natural order
-  compressedImagePaths.sort(naturalCompare);
+  compressedImagePaths.sort((pathA, pathB) =>
+    naturalCompare(
+      getFileNameWithoutExtension(pathA),
+      getFileNameWithoutExtension(pathB)
+    )
+  );
 
   // Separate compressed image paths to 3 sections: Pages, Thumbnails, Covers
   const compressedCoverPaths = compressedImagePaths.filter((imagePath) =>
