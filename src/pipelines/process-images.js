@@ -131,6 +131,7 @@ async function enlargeImage(imagePath, targetSuffix) {
     }
 
     try {
+      logger.info(`Using GPU ${index} for image ${imageName}...`);
       await runCommand(
         `${WAIFU2X_BIN_PATH} -i "${absoluteImagePath}" -o "${absoluteTargetImagePath}" -n 0 -s ${scale} -g ${index} -t 200 -m models-cunet -f png`
       );
