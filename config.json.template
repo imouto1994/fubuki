@@ -1,6 +1,6 @@
 {
   "type": "manga",
-  "enlargeWorkersCount": 2,
+  "enlargeWorkersCounts": [0, 2],
   "compressWorkersCount": 3,
   "idealWebtoonPageRatio": 1.5,
   "limitSize": 1500000000,

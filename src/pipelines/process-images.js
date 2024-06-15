@@ -35,7 +35,11 @@ const config = require("../config");
 const ENTRY_TYPE = config.type ?? "manga";
 const SKIP_UPSCALING = config.skipUpscaling ?? false;
 const SKIP_AUTOCOVER = config.skipAutocover ?? false;
-const ENLARGE_WORKERS_COUNT = config.enlargeWorkersCount || 2;
+const ENLARGE_WORKERS_COUNTS = config.enlargeWorkersCounts || [2];
+const ENLARGE_WORKERS_TOTAL = ENLARGE_WORKERS_COUNTS.reduce(
+  (total, count) => total + count,
+  0
+);
 const COMPRESS_WORKERS_COUNT = config.compressWorkersCount || 3;
 const WAIFU2X_BIN_PATH = path.join(
   process.cwd(),
@@ -65,14 +69,12 @@ async function compressImage(
   const encoder = new CWebp(imagePath);
   const isEnlargedImage = imageName.includes(WAIFU2X_FILE_SUFFIX);
 
-  if (isEnlargedImage) {
+  if (isEnlargedImage && width > enlargedTargetWidth) {
     // Always resize enlarged image to target ideal width
     encoder.resize(enlargedTargetWidth, 0);
-  } else {
+  } else if (width > maximumWidth) {
     // For original image, we will only resize if it exceeds maximum width
-    if (width > maximumWidth) {
-      encoder.resize(maximumWidth, 0);
-    }
+    encoder.resize(maximumWidth, 0);
   }
   encoder.quality(quality);
   await encoder.write(newWebpImagePath);
@@ -94,6 +96,7 @@ async function compressImage(
   await fsPromises.copyFile(imagePath, targetImagePath);
 }
 
+const CURRENT_COUNTS = ENLARGE_WORKERS_COUNTS.map(() => 0);
 async function enlargeImage(imagePath, targetSuffix) {
   const imageExtension = getFileExtension(imagePath);
   const imageDirPath = path.dirname(imagePath);
@@ -111,10 +114,27 @@ async function enlargeImage(imagePath, targetSuffix) {
     const absoluteImagePath = path.resolve(process.cwd(), imagePath);
     const scale = width < MIN_WIDTH_SKIP_ENLARGE / 2 ? 4 : 2;
 
+    let index = ENLARGE_WORKERS_COUNTS.length - 1;
+    while (index >= 0) {
+      if (CURRENT_COUNTS[index] < ENLARGE_WORKERS_COUNTS[index]) {
+        CURRENT_COUNTS[index]++;
+        break;
+      } else {
+        index--;
+      }
+    }
+
+    if (index < 0) {
+      throw new Error(
+        `Failed to select a GPU for enlarging image ${imageName}!`
+      );
+    }
+
     try {
       await runCommand(
-        `${WAIFU2X_BIN_PATH} -i "${absoluteImagePath}" -o "${absoluteTargetImagePath}" -n 0 -s ${scale} -t 200 -m models-cunet -f png`
+        `${WAIFU2X_BIN_PATH} -i "${absoluteImagePath}" -o "${absoluteTargetImagePath}" -n 0 -s ${scale} -g ${index} -t 200 -m models-cunet -f png`
       );
+      CURRENT_COUNTS[index]--;
       await fsPromises.access(absoluteTargetImagePath);
     } catch (err) {
       logger.error(
@@ -249,7 +269,7 @@ async function processImages(entryDirPath) {
   // Enlarge images (if needed)
   logger.info(`Enlarging images (if needed) under entry "${entryName}"...`);
   let enlargeError;
-  const enlargePoolLimit = pLimit(ENLARGE_WORKERS_COUNT);
+  const enlargePoolLimit = pLimit(ENLARGE_WORKERS_TOTAL);
   const enlargeTasks = [
     ...imagePaths.map((imagePath, index) =>
       enlargePoolLimit(() => enlargeImage(imagePath, padNumber(index + 1)))
